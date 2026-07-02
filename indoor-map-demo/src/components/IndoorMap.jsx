@@ -30,7 +30,7 @@ const zones = [
   {
     id: "entrance-area",
     name: "入口區",
-    x: 354,
+    x: 352,
     y: 354,
     width: 399,
     height: 109,
@@ -42,10 +42,18 @@ const obstacles = [
   {
     id: "sofa",
     name: "沙發",
-    x: 120,
-    y: 110,
-    width: 160,
-    height: 60,
+    x: 125,
+    y: 157,
+    width: 188,
+    height: 90,
+  },
+    {
+    id: "sofa1",
+    name: "沙發",
+    x: 125,
+    y: 247,
+    width: 66,
+    height: 125,
   },
   {
     id: "table",
@@ -62,6 +70,22 @@ const obstacles = [
     y: 50,
     width: 41,
     height: 286,
+  },
+    {
+    id: "sink",
+    name: "水槽",
+    x: 652,
+    y: 50,
+    width: 58,
+    height: 49,
+  },
+      {
+    id: "desktop",
+    name: "電腦桌",
+    x: 365,
+    y: 50,
+    width: 142,
+    height: 58,
   },
 ];
 
@@ -150,10 +174,10 @@ function IndoorMap() {
             </g>
           ))}
 
-          <line x1="50" y1="270" x2="750" y2="270" stroke="#334155" strokeWidth="2" />
+          {/* <line x1="50" y1="270" x2="750" y2="270" stroke="#334155" strokeWidth="2" />
           <line x1="350" y1="270" x2="350" y2="400" stroke="#334155" strokeWidth="2" />
           <line x1="50" y1="400" x2="750" y2="400" stroke="#334155" strokeWidth="2" />
-
+*/}
           {obstacles.map((obstacle) => (
             <g key={obstacle.id}>
               <rect
