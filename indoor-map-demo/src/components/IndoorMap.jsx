@@ -50,18 +50,18 @@ const obstacles = [
   {
     id: "table",
     name: "桌子",
-    x: 310,
-    y: 160,
-    width: 120,
-    height: 70,
+    x: 563,
+    y: 163,
+    width: 54,
+    height: 180,
   },
   {
-    id: "desk",
-    name: "書桌",
-    x: 500,
-    y: 300,
-    width: 140,
-    height: 60,
+    id: "cabinet",
+    name: "櫃子",
+    x: 709,
+    y: 50,
+    width: 41,
+    height: 286,
   },
 ];
 
