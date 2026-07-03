@@ -47,7 +47,7 @@ const obstacles = [
     width: 188,
     height: 90,
   },
-    {
+  {
     id: "sofa1",
     name: "沙發",
     x: 125,
@@ -71,7 +71,7 @@ const obstacles = [
     width: 41,
     height: 286,
   },
-    {
+  {
     id: "sink",
     name: "水槽",
     x: 652,
@@ -79,7 +79,7 @@ const obstacles = [
     width: 58,
     height: 49,
   },
-      {
+  {
     id: "desktop",
     name: "電腦桌",
     x: 365,
@@ -87,7 +87,7 @@ const obstacles = [
     width: 142,
     height: 58,
   },
-      {
+  {
     id: "desk-chair",
     name: "桌椅區",
     x: 391,
@@ -95,13 +95,37 @@ const obstacles = [
     width: 66,
     height: 117,
   },
-        {
+  {
     id: "robotic-arm",
     name: "機器手臂",
     x: 391,
     y: 178,
     width: 66,
     height: 37,
+  },
+  {
+    id: "no-entry",
+    name: "禁入區域",
+    x: 79,
+    y: 50,
+    width: 202,
+    height:64,
+  },
+  {
+    id: "cabinet2",
+    name: "櫃子",
+    x: 582,
+    y: 50,
+    width: 68,
+    height:49,
+  },
+  {
+    id: "fridge",
+    name: "冰箱",
+    x: 519,
+    y: 50,
+    width: 61,
+    height:67,
   },
 ];
 
