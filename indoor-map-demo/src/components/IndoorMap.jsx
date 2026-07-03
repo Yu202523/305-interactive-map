@@ -87,6 +87,22 @@ const obstacles = [
     width: 142,
     height: 58,
   },
+      {
+    id: "desk-chair",
+    name: "桌椅區",
+    x: 391,
+    y: 215,
+    width: 66,
+    height: 117,
+  },
+        {
+    id: "robotic-arm",
+    name: "機器手臂",
+    x: 391,
+    y: 178,
+    width: 66,
+    height: 37,
+  },
 ];
 
 const anchors = [
@@ -99,8 +115,8 @@ const anchors = [
 const robot = {
   id: "robot-a",
   name: "Robot A",
-  x: 400,
-  y: 220,
+  x: 170,
+  y: 420,
   status: "移動中",
 };
 
