@@ -138,18 +138,16 @@ const anchors = [
 
 const robot = {
   id: "robot-a",
-  name: "Robot A",
+  name: "Stretch3",
   x: 170,
   y: 420,
   status: "移動中",
 };
 
 const trajectory = [
-  { x: 180, y: 350 },
-  { x: 230, y: 320 },
-  { x: 280, y: 290 },
-  { x: 340, y: 250 },
-  { x: 400, y: 220 },
+  { x: 300, y: 260 },
+  { x: 300, y: 425 },
+  { x: 170, y: 425 },
 ];
 
 function IndoorMap() {
@@ -267,14 +265,16 @@ function IndoorMap() {
           ))}
 
           <g>
-            <circle
-              cx={robot.x}
-              cy={robot.y}
-              r="18"
-              fill="#ef4444"
-              stroke="#ffffff"
-              strokeWidth="4"
-            />
+            <text
+              x={robot.x}
+              y={robot.y}
+              fontSize="35"
+              textAnchor="middle"
+              dominantBaseline="middle"
+            >
+              🤖
+            </text>
+
             <text
               x={robot.x}
               y={robot.y + 38}
