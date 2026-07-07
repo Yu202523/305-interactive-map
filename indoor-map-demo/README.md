@@ -1,87 +1,86 @@
 # 305 Interactive Map
 
-This project is a React + Vite demo for drawing an indoor robot map with SVG.
-The current version focuses on a static map prototype based on a PPT floor-plan sketch.
+這個專案是用 React + Vite 製作的室內機器人互動地圖 demo。
+目前階段以 SVG 靜態地圖原型為主，地圖內容是根據 PPT 草圖整理而成。
 
-## Features
+## 功能內容
 
-- Indoor zones
-- Obstacles and furniture
+- 室內區域分區
+- 障礙物與家具
 - UWB anchors
-- Robot marker
-- Test trajectory
+- 機器人位置標記
+- 測試用移動軌跡
 
-## Requirements
+## 環境需求
 
 - Node.js 24+
 - npm
 
-## Getting Started
+## 啟動方式
 
-Move into the project folder:
+先進入專案資料夾：
 
 ```bash
 cd indoor-map-demo
 ```
 
-Install dependencies:
+安裝套件：
 
 ```bash
 npm install
 ```
 
-If Windows PowerShell blocks `npm.ps1`, use:
+如果 Windows PowerShell 擋住 `npm.ps1`，可以改用：
 
 ```bash
 npm.cmd install
 ```
 
-Start the dev server:
+啟動開發伺服器：
 
 ```bash
 npm run dev
 ```
 
-If PowerShell blocks `npm`, use:
+如果 PowerShell 擋住 `npm`，可以改用：
 
 ```bash
 npm.cmd run dev
 ```
 
-## Build
+## 打包建置
 
 ```bash
 npm run build
 ```
 
-If needed on Windows PowerShell:
+如果在 Windows PowerShell 需要替代寫法：
 
 ```bash
 npm.cmd run build
 ```
 
-## Map Structure
+## 地圖結構
 
-- `src/mapData.js`: stores zones, obstacles, anchors, robot, and trajectory data.
-- `src/components/IndoorMap.jsx`: renders the SVG indoor map from the data file.
-- To adjust map layout, update the coordinates in `src/mapData.js`.
+- `src/mapData.js`：存放 zones、obstacles、anchors、robot、trajectory 等地圖資料。
+- `src/components/IndoorMap.jsx`：根據資料檔內容繪製 SVG 室內地圖。
+- 如果要調整地圖版面、區域大小或物件位置，請優先修改 `src/mapData.js`。
 
-## Main Files
+## 主要檔案
 
-- `src/App.jsx`: application entry for the map page
-- `src/components/IndoorMap.jsx`: SVG rendering logic
-- `src/mapData.js`: indoor map data source
-- `src/App.css`: page-level styling
-- `src/index.css`: global styling
+- `src/App.jsx`：地圖頁面的入口
+- `src/components/IndoorMap.jsx`：SVG 繪圖邏輯
+- `src/mapData.js`：地圖資料來源
+- `src/App.css`：頁面樣式
+- `src/index.css`：全域樣式
 
-## Current Scope
+## 目前開發範圍
 
-This phase is focused on the SVG map prototype only.
-Not included yet:
+目前這個階段主要完成 SVG 地圖原型，以下內容暫時還不包含：
 
-- Real-time positioning
-- WebSocket integration
-- Live UWB data connection
-- Path planning
-- Database
-- Motion animation
+- 即時定位
+- WebSocket 串接
+- 真實 UWB 資料串接
+- 路徑規劃
+- 資料庫
+- 動畫效果
