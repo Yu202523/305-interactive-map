@@ -1,87 +1,87 @@
 # 305 Interactive Map
 
-這個專案是用 React + Vite 製作的室內互動地圖 demo，目前先完成第一版靜態 SVG 地圖，方便把 PPT 草稿逐步轉成網頁上的平面圖。
+This project is a React + Vite demo for drawing an indoor robot map with SVG.
+The current version focuses on a static map prototype based on a PPT floor-plan sketch.
 
-## 功能
+## Features
 
-- 顯示室內區域 `zones`
-- 顯示障礙物 `obstacles`
-- 顯示 UWB anchors
-- 顯示機器人位置
-- 顯示移動軌跡
+- Indoor zones
+- Obstacles and furniture
+- UWB anchors
+- Robot marker
+- Test trajectory
 
-## 開發環境
+## Requirements
 
 - Node.js 24+
 - npm
 
-## 安裝與啟動
+## Getting Started
 
-先進入專案資料夾：
+Move into the project folder:
 
 ```bash
 cd indoor-map-demo
 ```
 
-安裝套件：
+Install dependencies:
 
 ```bash
 npm install
 ```
 
-如果你在 Windows PowerShell 遇到 `npm.ps1` 被阻擋，也可以改用：
+If Windows PowerShell blocks `npm.ps1`, use:
 
 ```bash
 npm.cmd install
 ```
 
-啟動開發伺服器：
+Start the dev server:
 
 ```bash
 npm run dev
 ```
 
-如果 PowerShell 擋住 `npm`，改用：
+If PowerShell blocks `npm`, use:
 
 ```bash
 npm.cmd run dev
 ```
 
-啟動後打開終端機顯示的本機網址，就可以看到地圖畫面。
-
-## 建置
+## Build
 
 ```bash
 npm run build
 ```
 
-Windows PowerShell 版本：
+If needed on Windows PowerShell:
 
 ```bash
 npm.cmd run build
 ```
 
-## 主要檔案
+## Map Structure
 
-- `src/App.jsx`
-  用來載入地圖元件。
-- `src/components/IndoorMap.jsx`
-  地圖主元件，包含區域、障礙物、anchors、機器人與軌跡資料。
-- `src/App.css`
-  頁面版型與地圖外觀樣式。
-- `src/index.css`
-  全域樣式。
+- `src/mapData.js`: stores zones, obstacles, anchors, robot, and trajectory data.
+- `src/components/IndoorMap.jsx`: renders the SVG indoor map from the data file.
+- To adjust map layout, update the coordinates in `src/mapData.js`.
 
+## Main Files
 
+- `src/App.jsx`: application entry for the map page
+- `src/components/IndoorMap.jsx`: SVG rendering logic
+- `src/mapData.js`: indoor map data source
+- `src/App.css`: page-level styling
+- `src/index.css`: global styling
 
-## 目前階段
+## Current Scope
 
-目前是第一版靜態展示地圖，還沒有加入：
+This phase is focused on the SVG map prototype only.
+Not included yet:
 
-- 即時定位
-- WebSocket
-- UWB 即時資料串接
-- 路徑規劃
-- 資料庫
-- 動畫效果
-
+- Real-time positioning
+- WebSocket integration
+- Live UWB data connection
+- Path planning
+- Database
+- Motion animation
