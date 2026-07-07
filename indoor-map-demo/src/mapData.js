@@ -1,0 +1,150 @@
+export const zones = [
+  {
+    id: "kitchen",
+    name: "廚房區",
+    x: 518,
+    y: 50,
+    width: 233,
+    height: 304,
+    color: "#fff3cd",
+  },
+  {
+    id: "work-area",
+    name: "工作區",
+    x: 50,
+    y: 50,
+    width: 467,
+    height: 304,
+    color: "#d7ecff",
+  },
+  {
+    id: "living-room",
+    name: "客廳區",
+    x: 50,
+    y: 137,
+    width: 301,
+    height: 328,
+    color: "#ffe0cc",
+  },
+  {
+    id: "entrance-area",
+    name: "入口區",
+    x: 352,
+    y: 354,
+    width: 399,
+    height: 109,
+    color: "#d9f7d9",
+  },
+];
+
+export const obstacles = [
+  {
+    id: "sofa-main",
+    name: "沙發",
+    x: 125,
+    y: 157,
+    width: 188,
+    height: 90,
+  },
+  {
+    id: "sofa-side",
+    name: "沙發",
+    x: 125,
+    y: 247,
+    width: 66,
+    height: 125,
+  },
+  {
+    id: "table",
+    name: "桌子",
+    x: 563,
+    y: 163,
+    width: 54,
+    height: 180,
+  },
+  {
+    id: "cabinet-right",
+    name: "櫃子",
+    x: 709,
+    y: 50,
+    width: 41,
+    height: 286,
+  },
+  {
+    id: "sink",
+    name: "水槽",
+    x: 652,
+    y: 50,
+    width: 58,
+    height: 49,
+  },
+  {
+    id: "desktop",
+    name: "工作桌",
+    x: 365,
+    y: 50,
+    width: 142,
+    height: 58,
+  },
+  {
+    id: "desk-chair",
+    name: "桌椅區",
+    x: 391,
+    y: 215,
+    width: 66,
+    height: 117,
+  },
+  {
+    id: "robotic-arm",
+    name: "機械手臂",
+    x: 391,
+    y: 178,
+    width: 66,
+    height: 37,
+  },
+  {
+    id: "no-entry",
+    name: "禁止進入",
+    x: 79,
+    y: 50,
+    width: 202,
+    height: 64,
+  },
+  {
+    id: "cabinet-top",
+    name: "櫃子",
+    x: 582,
+    y: 50,
+    width: 68,
+    height: 49,
+  },
+  {
+    id: "fridge",
+    name: "冰箱",
+    x: 519,
+    y: 50,
+    width: 61,
+    height: 67,
+  },
+];
+
+export const anchors = [
+  { id: "A1", x: 70, y: 70 },
+  { id: "A2", x: 730, y: 70 },
+  { id: "A3", x: 70, y: 430 },
+  { id: "A4", x: 730, y: 430 },
+];
+
+export const robot = {
+  id: "robot-a",
+  name: "Stretch3",
+  x: 170,
+  y: 420,
+  status: "待命中",
+};
+
+export const trajectory = [
+  { x: 300, y: 260 },
+  { x: 300, y: 425 },
+  { x: 170, y: 425 },
+];

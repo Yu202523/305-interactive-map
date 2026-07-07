@@ -1,154 +1,4 @@
-const zones = [
-  {
-    id: "kitchen",
-    name: "廚房區",
-    x: 518,
-    y: 50,
-    width: 233,
-    height: 304,
-    color: "#fff3cd",
-  },
-  {
-    id: "work-area",
-    name: "工作區",
-    x: 50,
-    y: 50,
-    width: 467,
-    height: 304,
-    color: "#d7ecff",
-  },
-  {
-    id: "living-room",
-    name: "客廳區",
-    x: 50,
-    y: 137,
-    width: 301,
-    height: 328,
-    color: "#ffe0cc",
-  },
-  
-  {
-    id: "entrance-area",
-    name: "入口區",
-    x: 352,
-    y: 354,
-    width: 399,
-    height: 109,
-    color: "#d9f7d9",
-  },
-];
-
-const obstacles = [
-  {
-    id: "sofa",
-    name: "沙發",
-    x: 125,
-    y: 157,
-    width: 188,
-    height: 90,
-  },
-  {
-    id: "sofa1",
-    name: "沙發",
-    x: 125,
-    y: 247,
-    width: 66,
-    height: 125,
-  },
-  {
-    id: "table",
-    name: "桌子",
-    x: 563,
-    y: 163,
-    width: 54,
-    height: 180,
-  },
-  {
-    id: "cabinet",
-    name: "櫃子",
-    x: 709,
-    y: 50,
-    width: 41,
-    height: 286,
-  },
-  {
-    id: "sink",
-    name: "水槽",
-    x: 652,
-    y: 50,
-    width: 58,
-    height: 49,
-  },
-  {
-    id: "desktop",
-    name: "電腦桌",
-    x: 365,
-    y: 50,
-    width: 142,
-    height: 58,
-  },
-  {
-    id: "desk-chair",
-    name: "桌椅區",
-    x: 391,
-    y: 215,
-    width: 66,
-    height: 117,
-  },
-  {
-    id: "robotic-arm",
-    name: "機器手臂",
-    x: 391,
-    y: 178,
-    width: 66,
-    height: 37,
-  },
-  {
-    id: "no-entry",
-    name: "禁入區域",
-    x: 79,
-    y: 50,
-    width: 202,
-    height:64,
-  },
-  {
-    id: "cabinet2",
-    name: "櫃子",
-    x: 582,
-    y: 50,
-    width: 68,
-    height:49,
-  },
-  {
-    id: "fridge",
-    name: "冰箱",
-    x: 519,
-    y: 50,
-    width: 61,
-    height:67,
-  },
-];
-
-const anchors = [
-  { id: "A1", x: 70, y: 70 },
-  { id: "A2", x: 730, y: 70 },
-  { id: "A3", x: 70, y: 430 },
-  { id: "A4", x: 730, y: 430 },
-];
-
-const robot = {
-  id: "robot-a",
-  name: "Stretch3",
-  x: 170,
-  y: 420,
-  status: "移動中",
-};
-
-const trajectory = [
-  { x: 300, y: 260 },
-  { x: 300, y: 425 },
-  { x: 170, y: 425 },
-];
+import { anchors, obstacles, robot, trajectory, zones } from "../mapData";
 
 function IndoorMap() {
   const trajectoryPoints = trajectory
@@ -161,12 +11,14 @@ function IndoorMap() {
         <p className="eyebrow">Indoor Robot Demo</p>
         <h1>室內機器人定位地圖</h1>
         <p className="map-description">
-          這是第一版靜態 SVG 地圖。你之後只要把 PPT 草稿量到的公分座標，
-          依比例換成 x、y、width、height，就可以持續微調版面。
+          這個版本把地圖資料抽成獨立檔案了。之後你只要修改
+          <code> mapData.js </code>
+          裡的座標，就能調整區域、障礙物、Anchor、機器人和軌跡，不用一直改整個
+          SVG。
         </p>
         <div className="map-meta">
           <span>SVG: 800 x 500</span>
-          <span>地圖比例可再依 PPT 修正</span>
+          <span>資料已從元件抽離</span>
         </div>
       </div>
 
@@ -212,10 +64,6 @@ function IndoorMap() {
             </g>
           ))}
 
-          {/* <line x1="50" y1="270" x2="750" y2="270" stroke="#334155" strokeWidth="2" />
-          <line x1="350" y1="270" x2="350" y2="400" stroke="#334155" strokeWidth="2" />
-          <line x1="50" y1="400" x2="750" y2="400" stroke="#334155" strokeWidth="2" />
-*/}
           {obstacles.map((obstacle) => (
             <g key={obstacle.id}>
               <rect
@@ -272,9 +120,8 @@ function IndoorMap() {
               textAnchor="middle"
               dominantBaseline="middle"
             >
-              🤖
+              R
             </text>
-
             <text
               x={robot.x}
               y={robot.y + 38}
@@ -289,9 +136,9 @@ function IndoorMap() {
       </div>
 
       <div className="map-notes">
-        <h2>下一步怎麼改</h2>
-        <p>先把 PPT 上每個區域、家具、Anchor 的左上角和大小量出來。</p>
-        <p>再把資料改進這個元件最上方的 arrays，就能慢慢逼近你的正式平面圖。</p>
+        <h2>接下來怎麼改</h2>
+        <p>地圖座標資料現在都在 <code>src/mapData.js</code>，後續請優先修改那個檔案。</p>
+        <p>如果你要加新的家具、Anchor 或測試路徑，只要往對應的陣列新增物件就可以。</p>
       </div>
     </section>
   );
