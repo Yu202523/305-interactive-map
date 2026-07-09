@@ -10,14 +10,30 @@
 }
 
 .map-copy,
-.map-frame,
-.map-notes {
+.map-layout {
   width: min(100%, 980px);
   margin: 0 auto;
 }
 
 .map-copy {
   color: #1f2937;
+}
+
+.map-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  align-items: start;
+  gap: 24px;
+}
+
+.map-main {
+  min-width: 0;
+}
+
+.map-hint {
+  margin: 12px 6px 0;
+  color: #475569;
+  font-size: 0.95rem;
 }
 
 .eyebrow {
@@ -67,28 +83,202 @@
   overflow-x: auto;
 }
 
+.map-sidebar {
+  display: grid;
+  gap: 16px;
+  position: sticky;
+  top: 24px;
+}
+
+.panel-card {
+  padding: 18px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  box-shadow: 0 18px 42px rgba(15, 23, 42, 0.08);
+}
+
+.panel-card-tall {
+  padding-bottom: 24px;
+}
+
+.panel-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.panel-tab {
+  min-height: 42px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 999px;
+  background: #eef2ff;
+  color: #334155;
+  cursor: pointer;
+}
+
+.panel-tab.is-active {
+  background: #1d4ed8;
+  color: #ffffff;
+  border-color: #1d4ed8;
+}
+
+.panel-card h2 {
+  margin: 0 0 10px;
+  font-size: 1.15rem;
+  color: #1f2937;
+}
+
+.panel-card p {
+  margin: 0;
+  line-height: 1.65;
+  color: #475569;
+}
+
+.task-form {
+  display: grid;
+  gap: 16px;
+}
+
+.task-field {
+  display: grid;
+  gap: 8px;
+}
+
+.task-field span {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.task-field select {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  border-radius: 14px;
+  padding: 10px 14px;
+  background: #ffffff;
+  color: #0f172a;
+}
+
+.task-value {
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  border-radius: 14px;
+  background: #f8fafc;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+}
+
+.task-reset {
+  border: 0;
+  border-radius: 999px;
+  min-height: 44px;
+  padding: 10px 16px;
+  background: #1d4ed8;
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(29, 78, 216, 0.18);
+}
+
+.task-reset:hover {
+  background: #1e40af;
+}
+
+.task-primary {
+  border: 0;
+  border-radius: 999px;
+  min-height: 44px;
+  padding: 10px 16px;
+  background: #ea580c;
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(234, 88, 12, 0.2);
+}
+
+.task-primary:hover {
+  background: #c2410c;
+}
+
+.task-message {
+  margin: 0;
+  font-size: 0.92rem;
+  color: #475569;
+}
+
+.task-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.task-history-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.task-history {
+  max-height: 420px;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.task-history::-webkit-scrollbar {
+  width: 8px;
+}
+
+.task-history::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.8);
+  border-radius: 999px;
+}
+
+.task-history::-webkit-scrollbar-track {
+  background: rgba(226, 232, 240, 0.7);
+  border-radius: 999px;
+}
+
+.task-history-item {
+  padding: 14px;
+  border-radius: 16px;
+  background: #f8fafc;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+}
+
+.task-history-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: #334155;
+  font-size: 0.92rem;
+}
+
+.task-history-row + .task-history-row {
+  margin-top: 6px;
+}
+
+.task-history-time {
+  color: #64748b;
+}
+
+.task-history-empty {
+  color: #64748b;
+}
+
+.map-meta-column {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
 .map-frame svg {
   display: block;
   max-width: 100%;
   height: auto;
-}
-
-.map-notes {
-  padding: 20px 24px;
-  border-radius: 22px;
-  background: rgba(255, 251, 235, 0.86);
-  border: 1px solid rgba(251, 191, 36, 0.25);
-  color: #78350f;
-}
-
-.map-notes h2 {
-  margin: 0 0 8px;
-  font-size: 1.25rem;
-}
-
-.map-notes p {
-  margin: 8px 0 0;
-  line-height: 1.7;
 }
 
 @media (max-width: 900px) {
@@ -96,8 +286,16 @@
     padding: 24px 14px 36px;
   }
 
+  .map-layout {
+    grid-template-columns: 1fr;
+  }
+
   .map-frame {
     padding: 12px;
     border-radius: 20px;
+  }
+
+  .map-sidebar {
+    position: static;
   }
 }

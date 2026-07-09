@@ -138,13 +138,7 @@ export const anchors = [
 export const robot = {
   id: "robot-a",
   name: "Stretch3",
-  x: 170,
-  y: 420,
+  x: 300,
+  y: 260,
   status: "待命中",
 };
-
-export const trajectory = [
-  { x: 300, y: 260 },
-  { x: 300, y: 425 },
-  { x: 170, y: 425 },
-];
