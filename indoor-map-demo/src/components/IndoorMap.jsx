@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { anchors, obstacles, robot, zones } from "../mapData";
 
 const TASK_TYPES = [
@@ -12,7 +12,14 @@ const PANEL_TABS = [
   { id: "history", label: "任務紀錄" },
 ];
 
+const TASK_STATUS_FLOW = ["待執行", "執行中", "已完成"];
+const TASK_STATUS_PRIORITY = {
+  "執行中": 0,
+  "待執行": 1,
+  "已完成": 2,
+};
 const USER_LOCATION_LABEL = "使用者所在座標（之後串接）";
+const TOAST_MS = 2500;
 
 function formatPoint(point) {
   if (!point) {
@@ -28,11 +35,21 @@ function createTaskRecord({ taskType, start, destination }) {
     taskType,
     start,
     destination,
-    createdAt: new Date().toLocaleString("zh-TW", {
-      hour12: false,
-    }),
+    createdAt: new Date().toLocaleString("zh-TW", { hour12: false }),
+    createdAtMs: Date.now(),
     status: "待執行",
   };
+}
+
+function getNextStatus(status) {
+  const currentIndex = TASK_STATUS_FLOW.indexOf(status);
+  return TASK_STATUS_FLOW[(currentIndex + 1) % TASK_STATUS_FLOW.length];
+}
+
+function getStatusClassName(status) {
+  if (status === "執行中") return "is-running";
+  if (status === "待執行") return "is-pending";
+  return "is-complete";
 }
 
 function IndoorMap() {
@@ -43,6 +60,38 @@ function IndoorMap() {
   const [errandDestination, setErrandDestination] = useState(null);
   const [taskHistory, setTaskHistory] = useState([]);
   const [taskMessage, setTaskMessage] = useState("請先設定一筆任務。");
+  const [feedbackType, setFeedbackType] = useState("info");
+  const [toastMessage, setToastMessage] = useState("");
+
+  useEffect(() => {
+    if (!toastMessage) {
+      return undefined;
+    }
+
+    const timer = window.setTimeout(() => {
+      setToastMessage("");
+    }, TOAST_MS);
+
+    return () => window.clearTimeout(timer);
+  }, [toastMessage]);
+
+  const sortedTaskHistory = useMemo(() => {
+    return [...taskHistory].sort((left, right) => {
+      const priorityDiff =
+        TASK_STATUS_PRIORITY[left.status] - TASK_STATUS_PRIORITY[right.status];
+
+      if (priorityDiff !== 0) {
+        return priorityDiff;
+      }
+
+      return right.createdAtMs - left.createdAtMs;
+    });
+  }, [taskHistory]);
+
+  const setFeedback = (message, type = "info") => {
+    setTaskMessage(message);
+    setFeedbackType(type);
+  };
 
   const handleTaskTypeChange = (event) => {
     const nextTaskType = event.target.value;
@@ -50,33 +99,32 @@ function IndoorMap() {
     setGotoDestination(null);
     setErrandStart(null);
     setErrandDestination(null);
-    setTaskMessage("已切換任務類別，請重新確認任務內容。");
+    setFeedback("已切換任務類別，請重新確認任務內容。", "info");
   };
 
   const handleMapClick = (event) => {
     const svg = event.currentTarget;
     const bounds = svg.getBoundingClientRect();
     const viewBox = svg.viewBox.baseVal;
-
     const x = Math.round(((event.clientX - bounds.left) / bounds.width) * viewBox.width);
     const y = Math.round(((event.clientY - bounds.top) / bounds.height) * viewBox.height);
     const point = { x, y };
 
     if (taskType === "goto") {
       setGotoDestination(point);
-      setTaskMessage(`GoTo 目的位置已選為 ${formatPoint(point)}。`);
+      setFeedback(`GoTo 目的位置已選為 ${formatPoint(point)}。`, "info");
       return;
     }
 
     if (taskType === "errand") {
       if (!errandStart) {
         setErrandStart(point);
-        setTaskMessage(`跑腿任務出發位置已選為 ${formatPoint(point)}。`);
+        setFeedback(`跑腿任務出發位置已選為 ${formatPoint(point)}。`, "info");
         return;
       }
 
       setErrandDestination(point);
-      setTaskMessage(`跑腿任務目的位置已選為 ${formatPoint(point)}。`);
+      setFeedback(`跑腿任務目的位置已選為 ${formatPoint(point)}。`, "info");
     }
   };
 
@@ -84,7 +132,7 @@ function IndoorMap() {
     setGotoDestination(null);
     setErrandStart(null);
     setErrandDestination(null);
-    setTaskMessage("已清除目前選點。");
+    setFeedback("已清除目前選點。", "info");
   };
 
   const taskInstruction =
@@ -106,14 +154,29 @@ function IndoorMap() {
         ? USER_LOCATION_LABEL
         : formatPoint(errandDestination);
 
-  const canSubmitTask =
-    (taskType === "goto" && gotoDestination) ||
-    taskType === "come-here" ||
-    (taskType === "errand" && errandStart && errandDestination);
+  const fieldErrors = useMemo(() => {
+    const errors = {};
+
+    if (taskType === "goto" && !gotoDestination) {
+      errors.destination = "GoTo 需要先在地圖上選一個目的位置。";
+    }
+
+    if (taskType === "errand" && !errandStart) {
+      errors.start = "跑腿任務需要先選出發位置。";
+    }
+
+    if (taskType === "errand" && !errandDestination) {
+      errors.destination = "跑腿任務還需要再選一個目的位置。";
+    }
+
+    return errors;
+  }, [taskType, gotoDestination, errandStart, errandDestination]);
+
+  const canSubmitTask = Object.keys(fieldErrors).length === 0;
 
   const handleAddTask = () => {
     if (!canSubmitTask) {
-      setTaskMessage("任務資訊還沒填完整，請先完成必要選點。");
+      setFeedback("任務資訊還沒填完整，請先完成必要選點。", "error");
       return;
     }
 
@@ -136,18 +199,28 @@ function IndoorMap() {
     });
 
     setTaskHistory((current) => [nextTask, ...current]);
-    setTaskMessage("任務已加入紀錄列表。");
+    setFeedback("你可以在任務紀錄查看剛剛建立的任務。", "info");
+    setToastMessage("任務建立成功");
     setActiveTab("history");
+  };
+
+  const handleAdvanceStatus = (taskId) => {
+    setTaskHistory((current) =>
+      current.map((task) =>
+        task.id === taskId ? { ...task, status: getNextStatus(task.status) } : task,
+      ),
+    );
   };
 
   return (
     <section className="map-page">
+      {toastMessage ? <div className="task-toast">{toastMessage}</div> : null}
+
       <div className="map-copy">
         <p className="eyebrow">Indoor Robot Demo</p>
         <h1>室內機器人定位地圖</h1>
         <p className="map-description">
-          右側控制面板現在分成任務指派與任務紀錄兩個 tab。你可以先建立任務，
-          再在同一塊區域用列表查看過去指派的內容。
+          任務紀錄現在會依狀態優先排序：執行中、待執行、已完成。同狀態內則以較新的任務排在前面。
         </p>
       </div>
 
@@ -268,7 +341,12 @@ function IndoorMap() {
 
               {errandDestination && taskType === "errand" && (
                 <g>
-                  <circle cx={errandDestination.x} cy={errandDestination.y} r="12" fill="#f97316" />
+                  <circle
+                    cx={errandDestination.x}
+                    cy={errandDestination.y}
+                    r="12"
+                    fill="#f97316"
+                  />
                   <text
                     x={errandDestination.x}
                     y={errandDestination.y - 20}
@@ -336,18 +414,31 @@ function IndoorMap() {
 
                 <div className="task-field">
                   <span>出發位置</span>
-                  <div className="task-value">{taskStartValue}</div>
+                  <div className={`task-value ${fieldErrors.start ? "is-error" : ""}`}>
+                    {taskStartValue}
+                  </div>
+                  {fieldErrors.start ? <p className="field-error">{fieldErrors.start}</p> : null}
                 </div>
 
                 <div className="task-field">
                   <span>目的位置</span>
-                  <div className="task-value">{taskDestinationValue}</div>
+                  <div className={`task-value ${fieldErrors.destination ? "is-error" : ""}`}>
+                    {taskDestinationValue}
+                  </div>
+                  {fieldErrors.destination ? (
+                    <p className="field-error">{fieldErrors.destination}</p>
+                  ) : null}
                 </div>
 
-                <p className="task-message">{taskMessage}</p>
+                <p className={`task-message is-${feedbackType}`}>{taskMessage}</p>
 
                 <div className="task-actions">
-                  <button type="button" className="task-primary" onClick={handleAddTask}>
+                  <button
+                    type="button"
+                    className="task-primary"
+                    onClick={handleAddTask}
+                    disabled={!canSubmitTask}
+                  >
                     確定加入任務
                   </button>
                   <button type="button" className="task-reset" onClick={resetSelectedPoints}>
@@ -357,15 +448,17 @@ function IndoorMap() {
               </div>
             ) : (
               <div className="task-history">
-                {taskHistory.length === 0 ? (
+                {sortedTaskHistory.length === 0 ? (
                   <p className="task-history-empty">目前還沒有任務紀錄。</p>
                 ) : (
                   <ul className="task-history-list">
-                    {taskHistory.map((task) => (
+                    {sortedTaskHistory.map((task) => (
                       <li key={task.id} className="task-history-item">
                         <div className="task-history-row">
                           <strong>{task.taskType}</strong>
-                          <span>{task.status}</span>
+                          <span className={`task-status ${getStatusClassName(task.status)}`}>
+                            {task.status}
+                          </span>
                         </div>
                         <div className="task-history-row">
                           <span>出發：{task.start.label ?? formatPoint(task.start)}</span>
@@ -375,6 +468,15 @@ function IndoorMap() {
                         </div>
                         <div className="task-history-row task-history-time">
                           <span>{task.createdAt}</span>
+                        </div>
+                        <div className="task-history-row">
+                          <button
+                            type="button"
+                            className="task-status-button"
+                            onClick={() => handleAdvanceStatus(task.id)}
+                          >
+                            切換狀態
+                          </button>
                         </div>
                       </li>
                     ))}
