@@ -20,6 +20,13 @@ const TASK_STATUS_PRIORITY = {
 };
 const USER_LOCATION_LABEL = "使用者所在座標（之後串接）";
 const TOAST_MS = 2500;
+const ROOM_BOUNDS = {
+  left: 50,
+  top: 50,
+  right: 750,
+  bottom: 464,
+};
+const SAFE_POINT_PADDING = 14;
 
 function formatPoint(point) {
   if (!point) {
@@ -50,6 +57,83 @@ function getStatusClassName(status) {
   if (status === "執行中") return "is-running";
   if (status === "待執行") return "is-pending";
   return "is-complete";
+}
+
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max);
+}
+
+function isPointInsideObstacle(point, obstacle) {
+  return (
+    point.x >= obstacle.x &&
+    point.x <= obstacle.x + obstacle.width &&
+    point.y >= obstacle.y &&
+    point.y <= obstacle.y + obstacle.height
+  );
+}
+
+function isPointBlocked(point) {
+  return obstacles.some((obstacle) => isPointInsideObstacle(point, obstacle));
+}
+
+function clampPointToRoom(point) {
+  return {
+    x: clamp(point.x, ROOM_BOUNDS.left, ROOM_BOUNDS.right),
+    y: clamp(point.y, ROOM_BOUNDS.top, ROOM_BOUNDS.bottom),
+  };
+}
+
+function getNearestSafePoint(point) {
+  const roomPoint = clampPointToRoom(point);
+
+  if (!isPointBlocked(roomPoint)) {
+    return {
+      point: roomPoint,
+      adjusted: roomPoint.x !== point.x || roomPoint.y !== point.y,
+    };
+  }
+
+  const candidates = obstacles.flatMap((obstacle) => {
+    if (!isPointInsideObstacle(roomPoint, obstacle)) {
+      return [];
+    }
+
+    return [
+      { x: obstacle.x - SAFE_POINT_PADDING, y: roomPoint.y },
+      { x: obstacle.x + obstacle.width + SAFE_POINT_PADDING, y: roomPoint.y },
+      { x: roomPoint.x, y: obstacle.y - SAFE_POINT_PADDING },
+      { x: roomPoint.x, y: obstacle.y + obstacle.height + SAFE_POINT_PADDING },
+      { x: obstacle.x - SAFE_POINT_PADDING, y: obstacle.y - SAFE_POINT_PADDING },
+      {
+        x: obstacle.x + obstacle.width + SAFE_POINT_PADDING,
+        y: obstacle.y - SAFE_POINT_PADDING,
+      },
+      {
+        x: obstacle.x - SAFE_POINT_PADDING,
+        y: obstacle.y + obstacle.height + SAFE_POINT_PADDING,
+      },
+      {
+        x: obstacle.x + obstacle.width + SAFE_POINT_PADDING,
+        y: obstacle.y + obstacle.height + SAFE_POINT_PADDING,
+      },
+    ];
+  });
+
+  const safeCandidates = candidates
+    .map(clampPointToRoom)
+    .filter((candidate) => !isPointBlocked(candidate));
+
+  if (safeCandidates.length === 0) {
+    return { point: roomPoint, adjusted: false, blocked: true };
+  }
+
+  const bestPoint = safeCandidates.reduce((best, candidate) => {
+    const candidateDistance = Math.hypot(candidate.x - roomPoint.x, candidate.y - roomPoint.y);
+    const bestDistance = Math.hypot(best.x - roomPoint.x, best.y - roomPoint.y);
+    return candidateDistance < bestDistance ? candidate : best;
+  });
+
+  return { point: bestPoint, adjusted: true };
 }
 
 function IndoorMap() {
@@ -108,23 +192,39 @@ function IndoorMap() {
     const viewBox = svg.viewBox.baseVal;
     const x = Math.round(((event.clientX - bounds.left) / bounds.width) * viewBox.width);
     const y = Math.round(((event.clientY - bounds.top) / bounds.height) * viewBox.height);
-    const point = { x, y };
+    const rawPoint = { x, y };
+    const { point, adjusted, blocked } = getNearestSafePoint(rawPoint);
+
+    if (blocked) {
+      setFeedback("這個位置目前被障礙物占住，請改選其他位置。", "error");
+      return;
+    }
+
+    const pointHint = adjusted
+      ? `${formatPoint(rawPoint)} 被自動修正為 ${formatPoint(point)}`
+      : formatPoint(point);
 
     if (taskType === "goto") {
       setGotoDestination(point);
-      setFeedback(`GoTo 目的位置已選為 ${formatPoint(point)}。`, "info");
+      setFeedback(`GoTo 目的位置已選為 ${pointHint}。`, adjusted ? "success" : "info");
       return;
     }
 
     if (taskType === "errand") {
       if (!errandStart) {
         setErrandStart(point);
-        setFeedback(`跑腿任務出發位置已選為 ${formatPoint(point)}。`, "info");
+        setFeedback(
+          `跑腿任務出發位置已選為 ${pointHint}。`,
+          adjusted ? "success" : "info",
+        );
         return;
       }
 
       setErrandDestination(point);
-      setFeedback(`跑腿任務目的位置已選為 ${formatPoint(point)}。`, "info");
+      setFeedback(
+        `跑腿任務目的位置已選為 ${pointHint}。`,
+        adjusted ? "success" : "info",
+      );
     }
   };
 
@@ -137,12 +237,12 @@ function IndoorMap() {
 
   const taskInstruction =
     taskType === "goto"
-      ? "請在地圖上點一下目的座標。"
+      ? "請在地圖上點一下目的座標，若點到障礙物會自動避開。"
       : taskType === "come-here"
         ? "ComeHere 會直接以前往使用者位置為目的地。"
         : !errandStart
-          ? "請先在地圖上點選跑腿任務的出發位置。"
-          : "請再點一次地圖，選擇跑腿任務的目的位置。";
+          ? "請先在地圖上點選跑腿任務的出發位置，若點到障礙物會自動避開。"
+          : "請再點一次地圖，選擇跑腿任務的目的位置，若點到障礙物會自動避開。";
 
   const taskStartValue =
     taskType === "errand" ? formatPoint(errandStart) : `機器人當前位置 ${formatPoint(robot)}`;
@@ -453,7 +553,16 @@ function IndoorMap() {
                 ) : (
                   <ul className="task-history-list">
                     {sortedTaskHistory.map((task) => (
-                      <li key={task.id} className="task-history-item">
+                      <li
+                        key={task.id}
+                        className={`task-history-item ${
+                          task.status === "執行中"
+                            ? "is-running-task"
+                            : task.status === "已完成"
+                              ? "is-complete-task"
+                              : ""
+                        }`}
+                      >
                         <div className="task-history-row">
                           <strong>{task.taskType}</strong>
                           <span className={`task-status ${getStatusClassName(task.status)}`}>
